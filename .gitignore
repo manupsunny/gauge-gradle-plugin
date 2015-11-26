@@ -3,3 +3,5 @@
 build/
 *.iml
 logs
+repo
+sample/libs

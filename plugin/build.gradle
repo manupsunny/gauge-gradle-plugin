@@ -1,0 +1,28 @@
+group 'com.thoughtworks.gauge.gradle'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'maven'
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.7
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile gradleApi()
+    compile 'com.thoughtworks.gauge:gauge-java:0.3.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}
+
+uploadArchives.dependsOn install
+install.dependsOn build
