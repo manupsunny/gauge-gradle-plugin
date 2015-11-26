@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'gauge'
+apply plugin: 'application'
+
+group = "my-gauge-tests"
+version = "1.0.0"
+
+description = "My Gauge Tests"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url uri('../repo')
+        }
+    }
+    dependencies {
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.0-SNAPSHOT'
+        classpath files("$projectDir/libs")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}

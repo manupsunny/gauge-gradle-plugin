@@ -1,2 +1,3 @@
 rootProject.name = 'gauge-gradle-plugin'
 include 'plugin'
+include 'sample'
