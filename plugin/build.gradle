@@ -37,10 +37,10 @@ install.dependsOn build
 
 
 Properties plugin = new Properties()
-plugin.load(project.rootProject.file('../plugin.properties').newDataInputStream())
+plugin.load(project.file('../plugin.properties').newDataInputStream())
 
 Properties credentials = new Properties()
-credentials.load(project.rootProject.file('../local.properties').newDataInputStream())
+credentials.load(project.file('../local.properties').newDataInputStream())
 
 group plugin.getProperty("groupId")
 version plugin.getProperty("version")

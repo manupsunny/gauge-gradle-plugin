@@ -13,12 +13,10 @@ targetCompatibility = 1.7
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url uri('../repo')
-        }
+        jcenter()
     }
     dependencies {
-        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.0-SNAPSHOT'
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.0.0'
         classpath files("$projectDir/libs")
     }
 }
