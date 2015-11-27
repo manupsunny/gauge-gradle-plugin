@@ -30,3 +30,12 @@ repositories {
 dependencies {
 
 }
+
+gauge {
+    specsDir = 'specs'
+    inParallel = true
+    nodes = 2
+    env = 'dev'
+    tags = 'tag1'
+    additionalFlags = '--verbose'
+}
