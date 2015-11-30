@@ -64,7 +64,7 @@ public class GaugePlugin implements Plugin<Project> {
     private void setInParallel(Map<String, ?> properties, GaugeExtension extension) {
         String inParallel = (String) properties.get(IN_PARALLEL);
         if (inParallel != null) {
-            extension.setInParallel(inParallel.equals("true"));
+            extension.setInParallel("true".equals(inParallel));
         }
     }
 

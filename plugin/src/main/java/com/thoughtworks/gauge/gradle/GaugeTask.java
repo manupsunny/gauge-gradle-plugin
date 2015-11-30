@@ -57,8 +57,8 @@ public class GaugeTask extends DefaultTask {
             ProcessBuilder builder = createProcessBuilder();
             debug("Executing => " + builder.command());
             Process process = builder.start();
-            Util.InheritIO(process.getInputStream(), System.out);
-            Util.InheritIO(process.getErrorStream(), System.err);
+            Util.inheritIO(process.getInputStream(), System.out);
+            Util.inheritIO(process.getErrorStream(), System.err);
             if (process.waitFor() != 0) {
                 throw new GaugeExecutionFailedException();
             }
