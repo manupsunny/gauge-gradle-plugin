@@ -75,7 +75,7 @@ bintray {
         version {
             name = plugin.getProperty("version")
             desc = plugin.getProperty("description")
-            released  = new Date()
+            released = new Date()
         }
     }
 }

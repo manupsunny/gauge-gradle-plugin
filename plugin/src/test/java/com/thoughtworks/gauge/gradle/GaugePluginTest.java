@@ -8,7 +8,6 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.SortedMap;
 
 import static org.junit.Assert.*;

@@ -2,6 +2,7 @@
 [![Download](https://api.bintray.com/packages/manupsunny/maven/gauge-gradle-plugin/images/download.svg) ](https://bintray.com/manupsunny/maven/gauge-gradle-plugin/_latestVersion)
 [![Build Status](https://snap-ci.com/manupsunny/gauge-gradle-plugin/branch/master/build_image)](https://snap-ci.com/manupsunny/gauge-gradle-plugin/branch/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/d4d3e7d6c4ce4fa3a79f2790167fd511)](https://www.codacy.com/app/manupsunny/gauge-gradle-plugin)
+[![License](http://img.shields.io/:license-gpl3-blue.svg)](https://www.gnu.org/licenses/gpl.txt)
 
 
 # Gauge-gradle-plugin
