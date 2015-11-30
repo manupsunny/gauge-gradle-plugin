@@ -67,7 +67,7 @@ public class GaugeTask extends DefaultTask {
         }
     }
 
-    private ProcessBuilder createProcessBuilder() {
+    public ProcessBuilder createProcessBuilder() {
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(createGaugeCommand());
         String customClasspath = createCustomClasspath();

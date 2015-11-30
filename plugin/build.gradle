@@ -120,3 +120,11 @@ task writeNewPom << {
 }
 
 bintrayUpload.dependsOn writeNewPom
+
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+    }
+}

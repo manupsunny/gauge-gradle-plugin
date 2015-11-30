@@ -13,7 +13,6 @@ targetCompatibility = 1.7
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.0.0'
