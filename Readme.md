@@ -5,7 +5,7 @@
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](https://www.gnu.org/licenses/gpl.txt)
 
 
-# Gauge-gradle-plugin
+# Gauge Gradle Plugin
 
 Use the gauge-gradle-plugin to execute specifications in your gauge java project and manage dependencies using [gradle](http://gradle.org//).
 
@@ -86,3 +86,8 @@ The following plugin properties can be additionally set:
 See gauge's [command line interface](http://getgauge.io/documentation/user/current/cli/index.html) for list of all flags that be used with **-PadditionalFlags** option.
 
 
+### License
+
+![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
+
+Gauge Gradle Plugin is released under [GNU Public License Version 3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
