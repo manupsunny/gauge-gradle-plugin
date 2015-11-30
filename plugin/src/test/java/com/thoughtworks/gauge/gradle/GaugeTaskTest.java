@@ -14,7 +14,7 @@ public class GaugeTaskTest {
     private Project project;
 
     @Before
-    public void setup() {
+    public void setUp() {
         GaugePlugin plugin = new GaugePlugin();
         project = ProjectBuilder.builder().build();
         plugin.apply(project);

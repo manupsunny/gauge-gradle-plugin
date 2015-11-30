@@ -15,21 +15,17 @@ import static org.junit.Assert.*;
 
 public class GaugePluginTest {
     private Project project;
-    private GaugePlugin plugin;
 
     @Before
-    public void setup() {
+    public void setUp() {
         project = ProjectBuilder.builder().build();
-        plugin = new GaugePlugin();
     }
 
     @Test
-    public void conventionShouldBeRegisteredOnApply() {
+    public void pluginShouldBeAddedOnApply() {
         project.getPluginManager().apply("gauge");
         assertTrue(project.getPlugins().getPlugin("gauge") instanceof GaugePlugin);
         assertFalse(project.getPlugins().getPlugin("gauge") instanceof JavaPlugin);
-        String path = new File("src/test/resources/").getAbsolutePath();
-        project.setBuildDir(path);
     }
 
     @Test
