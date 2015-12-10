@@ -87,11 +87,11 @@ public class GaugeTask extends DefaultTask {
     public ArrayList<String> createGaugeCommand() {
         ArrayList<String> command = new ArrayList<>();
         command.add(GAUGE);
-        addSpecsDir(command);
         addParallelFlags(command);
         addEnv(command);
         addTags(command);
         addAdditionalFlags(command);
+        addSpecsDir(command);
         return command;
     }
 
