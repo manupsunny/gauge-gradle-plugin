@@ -22,8 +22,6 @@ package com.thoughtworks.gauge.gradle;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
-import java.util.Map;
-
 public class GaugePlugin implements Plugin<Project> {
 
     public static final String GAUGE = "gauge";
