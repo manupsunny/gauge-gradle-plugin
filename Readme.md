@@ -54,22 +54,26 @@ gauge {
 
 ### Executing specs using gradle
 To execute gauge specs,
+
 ````
 gradle gauge
 ````
 
 #### Execute specs in parallel
 ```
-gradle gauge -PspecsDir=specs -PinParallel=true
+gradle gauge -PinParallel=true -PspecsDir=specs
 ```
 #### Execute specs by tags
 ```
-gradle gauge -PspecsDir=specs -Ptags="!in-progress"
+gradle gauge -Ptags="!in-progress" -PspecsDir=specs
 ```
 #### Specifying execution environment
 ```
-gradle gauge -PspecsDir=specs -Penv="dev"
+gradle gauge -Penv="dev" -PspecsDir=specs
 ```
+
+Note : Pass specsDir parameter as the last one.
+
 ### All additional Properties
 The following plugin properties can be additionally set:
 
