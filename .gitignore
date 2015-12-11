@@ -6,4 +6,5 @@ logs
 repo
 sample/libs
 sample/reports
+sample/reportsCI
 local.properties

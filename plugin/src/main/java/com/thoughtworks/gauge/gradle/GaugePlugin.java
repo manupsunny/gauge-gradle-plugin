@@ -27,80 +27,10 @@ import java.util.Map;
 public class GaugePlugin implements Plugin<Project> {
 
     public static final String GAUGE = "gauge";
-    public static final String SPECS_DIR = "specsDir";
-    public static final String IN_PARALLEL = "inParallel";
-    public static final String TAGS = "tags";
-    public static final String ENV = "env";
-    public static final String NODES = "nodes";
-    public static final String ADDITIONAL_FLAGS = "additionalFlags";
-    public static final String CLASSPATH = "classpath";
 
     @Override
     public void apply(Project project) {
         project.getExtensions().create(GAUGE, GaugeExtension.class);
-        pullCommandLineArguments(project);
         project.getTasks().create(GAUGE, GaugeTask.class);
     }
-
-    private void pullCommandLineArguments(Project project) {
-        GaugeExtension extension = project.getExtensions().findByType(GaugeExtension.class);
-        Map<String, ?> properties = project.getProperties();
-        setSpecsDir(properties, extension);
-        setInParallel(properties, extension);
-        setTags(properties, extension);
-        setEnv(properties, extension);
-        setNodes(properties, extension);
-        setAdditionalFlags(properties, extension);
-        setClasspath(properties, extension);
-    }
-
-    private void setSpecsDir(Map<String, ?> properties, GaugeExtension extension) {
-        String specsDir = (String) properties.get(SPECS_DIR);
-        if (specsDir != null) {
-            extension.setSpecsDir(specsDir);
-        }
-    }
-
-    private void setInParallel(Map<String, ?> properties, GaugeExtension extension) {
-        String inParallel = (String) properties.get(IN_PARALLEL);
-        if (inParallel != null) {
-            extension.setInParallel("true".equals(inParallel));
-        }
-    }
-
-    private void setTags(Map<String, ?> properties, GaugeExtension extension) {
-        String tags = (String) properties.get(TAGS);
-        if (tags != null) {
-            extension.setTags(tags);
-        }
-    }
-
-    private void setEnv(Map<String, ?> properties, GaugeExtension extension) {
-        String env = (String) properties.get(ENV);
-        if (env != null) {
-            extension.setEnv(env);
-        }
-    }
-
-    private void setNodes(Map<String, ?> properties, GaugeExtension extension) {
-        String nodes = (String) properties.get(NODES);
-        if (nodes != null) {
-            extension.setNodes(Integer.parseInt(nodes));
-        }
-    }
-
-    private void setAdditionalFlags(Map<String, ?> properties, GaugeExtension extension) {
-        String flags = (String) properties.get(ADDITIONAL_FLAGS);
-        if (flags != null) {
-            extension.setAdditionalFlags(flags);
-        }
-    }
-
-    private void setClasspath(Map<String, ?> properties, GaugeExtension extension) {
-        String classpath = (String) properties.get(CLASSPATH);
-        if (classpath != null) {
-            extension.setClasspath(classpath);
-        }
-    }
-
 }

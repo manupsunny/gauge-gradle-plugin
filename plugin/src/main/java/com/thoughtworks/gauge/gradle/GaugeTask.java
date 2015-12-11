@@ -20,8 +20,10 @@
 package com.thoughtworks.gauge.gradle;
 
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
+import com.thoughtworks.gauge.gradle.util.PropertyManager;
 import com.thoughtworks.gauge.gradle.util.Util;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +36,21 @@ public class GaugeTask extends DefaultTask {
     private final Logger log = LoggerFactory.getLogger("gauge");
     private GaugeExtension extension;
 
-    public static final String TAGS_FLAG = "--tags";
-    public static final String GAUGE = "gauge";
-    public static final String PARALLEL_FLAG = "--parallel";
-    public static final String DEFAULT_SPECS_DIR = "specs";
+    private static final String TAGS_FLAG = "--tags";
+    private static final String GAUGE = "gauge";
+    private static final String PARALLEL_FLAG = "--parallel";
+    private static final String DEFAULT_SPECS_DIR = "specs";
     private static final String NODES_FLAG = "-n";
-    public static final String GAUGE_CUSTOM_CLASSPATH_ENV = "gauge_custom_classpath";
     private static final String ENV_FLAG = "--env";
+    private static final String GAUGE_CUSTOM_CLASSPATH_ENV = "gauge_custom_classpath";
 
     @TaskAction
     public void gauge() {
         try {
-            extension = getProject().getExtensions().findByType(GaugeExtension.class);
+            Project project = getProject();
+            extension = project.getExtensions().findByType(GaugeExtension.class);
+            PropertyManager propertyManager = new PropertyManager(project, extension);
+            propertyManager.setProperties();
             executeGaugeSpecs();
         } catch (GaugeExecutionFailedException e) {
             e.printStackTrace();
@@ -55,7 +60,7 @@ public class GaugeTask extends DefaultTask {
     private void executeGaugeSpecs() throws GaugeExecutionFailedException {
         try {
             ProcessBuilder builder = createProcessBuilder();
-            debug("Executing => " + builder.command());
+            System.out.println("[INFO] Executing command => " + builder.command());
             Process process = builder.start();
             Util.inheritIO(process.getInputStream(), System.out);
             Util.inheritIO(process.getErrorStream(), System.err);
@@ -87,11 +92,11 @@ public class GaugeTask extends DefaultTask {
     public ArrayList<String> createGaugeCommand() {
         ArrayList<String> command = new ArrayList<>();
         command.add(GAUGE);
-        addSpecsDir(command);
+        addTags(command);
         addParallelFlags(command);
         addEnv(command);
-        addTags(command);
         addAdditionalFlags(command);
+        addSpecsDir(command);
         return command;
     }
 
