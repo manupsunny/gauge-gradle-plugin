@@ -3,7 +3,7 @@ apply plugin: 'gauge'
 apply plugin: 'application'
 
 group = "my-gauge-tests"
-version = "1.0.0"
+version = "1.1.0"
 
 description = "My Gauge Tests"
 
@@ -12,10 +12,14 @@ targetCompatibility = 1.7
 
 buildscript {
     repositories {
+//        Used for development
+//        maven {
+//            url "../repo"
+//        }
         mavenCentral()
     }
     dependencies {
-        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.0.0'
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.1.0'
         classpath files("$projectDir/libs")
     }
 }
@@ -31,8 +35,7 @@ dependencies {
 gauge {
     specsDir = 'specs'
     inParallel = true
-    nodes = 2
-    env = 'dev'
-    tags = 'tag1'
+    nodes = 4
+    env = 'ci'
     additionalFlags = '--verbose'
 }
