@@ -25,7 +25,7 @@ description = "My Gauge Tests"
 
 buildscript {
     repositories {
-        mavenCentral()
+        mavenCentral()  // or jcenter()
     }
     dependencies {
         classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.1.0'
