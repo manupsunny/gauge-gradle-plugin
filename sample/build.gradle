@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-
+    compile 'com.thoughtworks.gauge:gauge-java:0.3.4'
 }
 
 gauge {

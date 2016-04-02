@@ -28,6 +28,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,47 +47,45 @@ public class GaugeTask extends DefaultTask {
 
     @TaskAction
     public void gauge() {
-        try {
-            Project project = getProject();
-            extension = project.getExtensions().findByType(GaugeExtension.class);
-            PropertyManager propertyManager = new PropertyManager(project, extension);
-            propertyManager.setProperties();
-            executeGaugeSpecs();
-        } catch (GaugeExecutionFailedException e) {
-            e.printStackTrace();
-        }
+        Project project = getProject();
+        extension = project.getExtensions().findByType(GaugeExtension.class);
+        PropertyManager propertyManager = new PropertyManager(project, extension);
+        propertyManager.setProperties();
+        executeGaugeSpecs();
     }
 
     private void executeGaugeSpecs() throws GaugeExecutionFailedException {
         try {
             ProcessBuilder builder = createProcessBuilder();
-            System.out.println("[INFO] Executing command => " + builder.command());
+            info("Executing command => " + builder.command());
             Process process = builder.start();
             Util.inheritIO(process.getInputStream(), System.out);
             Util.inheritIO(process.getErrorStream(), System.err);
             if (process.waitFor() != 0) {
-                throw new GaugeExecutionFailedException();
+                throw new GaugeExecutionFailedException("Execution failed for one or more tests!");
             }
-        } catch (InterruptedException | IOException | NullPointerException e) {
+        } catch (InterruptedException | NullPointerException e) {
             throw new GaugeExecutionFailedException(e);
+        } catch (IOException e) {
+            throw new GaugeExecutionFailedException("Gauge or Java runner is not installed! Read http://getgauge.io/documentation/user/current/getting_started/download_and_install.html");
         }
     }
 
     public ProcessBuilder createProcessBuilder() {
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(createGaugeCommand());
-        String customClasspath = createCustomClasspath();
-        debug("Setting Custom classpath => %s", customClasspath);
-        builder.environment().put(GAUGE_CUSTOM_CLASSPATH_ENV, customClasspath);
+
+        SetClasspath(builder);
         return builder;
     }
 
-    private String createCustomClasspath() {
+    private void SetClasspath(ProcessBuilder builder) {
         String classpath = extension.getClasspath();
-        if (classpath == null || classpath.isEmpty()) {
-            return "";
+        if (classpath == null) {
+            classpath = "";
         }
-        return classpath;
+        debug("Setting Custom classpath => %s", classpath);
+        builder.environment().put(GAUGE_CUSTOM_CLASSPATH_ENV, classpath);
     }
 
     public ArrayList<String> createGaugeCommand() {
@@ -128,9 +127,10 @@ public class GaugeTask extends DefaultTask {
     }
 
     private void addSpecsDir(ArrayList<String> command) {
-        String specsDir = extension.getSpecsDir();
-        if (specsDir != null) {
-            command.add(specsDir);
+        String specsDirectoryPath = extension.getSpecsDir();
+
+        if (specsDirectoryPath != null) {
+            command.add(specsDirectoryPath);
         } else {
             warn("Property 'specsDir' not set. Using default value => '%s'", DEFAULT_SPECS_DIR);
             command.add(DEFAULT_SPECS_DIR);
@@ -151,5 +151,13 @@ public class GaugeTask extends DefaultTask {
 
     private void debug(String format, String... args) {
         log.debug(String.format(format, args));
+    }
+
+    private void error(String format, String... args) {
+        log.error(String.format(format, args));
+    }
+
+    private void info(String format, String... args) {
+        log.info(String.format(format, args));
     }
 }

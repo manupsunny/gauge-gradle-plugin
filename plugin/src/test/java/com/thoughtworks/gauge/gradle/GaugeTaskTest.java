@@ -1,12 +1,16 @@
 package com.thoughtworks.gauge.gradle;
 
+import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class GaugeTaskTest {
@@ -28,7 +32,6 @@ public class GaugeTaskTest {
 
         List<String> command = task.createGaugeCommand();
         assertTrue(command.contains("gauge"));
-        assertTrue(command.contains("specsFolder"));
         assertTrue(command.contains("--parallel"));
         assertTrue(command.contains("-n"));
         assertTrue(command.contains("2"));
@@ -41,11 +44,41 @@ public class GaugeTaskTest {
 
     private void setGaugeOptions() {
         GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setSpecsDir("specsFolder");
         gauge.setInParallel(true);
         gauge.setNodes(2);
         gauge.setEnv("dev");
         gauge.setTags("tag1");
         gauge.setAdditionalFlags("--verbose");
+    }
+
+    @Test
+    public void shouldLoadSpecsDirPropertyIfFolderExists() {
+        setSpecsDirOptionWithExistingFolder();
+        task.gauge();
+
+        List<String> command = task.createGaugeCommand();
+        assertTrue(command.contains("specsFolder"));
+    }
+
+    private void setSpecsDirOptionWithExistingFolder() {
+        File currentDir = new File("./specsFolder");
+        currentDir.mkdir();
+
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        gauge.setSpecsDir("specsFolder");
+    }
+
+    @Test(expected = GaugeExecutionFailedException.class)
+    public void shouldThrowExceptionWhenLoadingSpecsDirPropertyWhenFolderDoesNotExists() {
+        setSpecsDirOptionWithNonExistingFolder();
+        task.gauge();
+
+        List<String> command = task.createGaugeCommand();
+        assertTrue(!command.contains("specsFolder"));
+    }
+
+    private void setSpecsDirOptionWithNonExistingFolder() {
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        gauge.setSpecsDir("nonSpecsFolder");
     }
 }

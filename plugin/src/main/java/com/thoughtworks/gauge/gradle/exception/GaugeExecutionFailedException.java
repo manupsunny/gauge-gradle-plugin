@@ -17,12 +17,14 @@
 
 package com.thoughtworks.gauge.gradle.exception;
 
-public class GaugeExecutionFailedException extends Exception {
+import org.gradle.api.GradleException;
+
+public class GaugeExecutionFailedException extends GradleException {
     public GaugeExecutionFailedException(Throwable throwable) {
-        super(throwable);
+        super(throwable.getMessage(), throwable);
     }
 
-    public GaugeExecutionFailedException() {
-
+    public GaugeExecutionFailedException(String message) {
+        super(message);
     }
 }
