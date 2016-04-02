@@ -130,10 +130,19 @@ public class GaugeTask extends DefaultTask {
         String specsDirectoryPath = extension.getSpecsDir();
 
         if (specsDirectoryPath != null) {
+            ValidateSpecsDirectory(specsDirectoryPath);
             command.add(specsDirectoryPath);
         } else {
             warn("Property 'specsDir' not set. Using default value => '%s'", DEFAULT_SPECS_DIR);
             command.add(DEFAULT_SPECS_DIR);
+        }
+    }
+
+    private void ValidateSpecsDirectory(String specsDirectoryPath) {
+        File specsDirectory = new File(specsDirectoryPath);
+        if (!specsDirectory.exists()) {
+            error("Specs directory specified is not existing!");
+            throw new GaugeExecutionFailedException("Specs directory specified is not existing!");
         }
     }
 
