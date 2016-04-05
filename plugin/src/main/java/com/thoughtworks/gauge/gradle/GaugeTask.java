@@ -75,11 +75,11 @@ public class GaugeTask extends DefaultTask {
         ProcessBuilder builder = new ProcessBuilder();
         builder.command(createGaugeCommand());
 
-        SetClasspath(builder);
+        setClasspath(builder);
         return builder;
     }
 
-    private void SetClasspath(ProcessBuilder builder) {
+    private void setClasspath(ProcessBuilder builder) {
         String classpath = extension.getClasspath();
         if (classpath == null) {
             classpath = "";
@@ -130,7 +130,7 @@ public class GaugeTask extends DefaultTask {
         String specsDirectoryPath = extension.getSpecsDir();
 
         if (specsDirectoryPath != null) {
-            ValidateSpecsDirectory(specsDirectoryPath);
+            validateSpecsDirectory(specsDirectoryPath);
             command.add(specsDirectoryPath);
         } else {
             warn("Property 'specsDir' not set. Using default value => '%s'", DEFAULT_SPECS_DIR);
@@ -138,7 +138,7 @@ public class GaugeTask extends DefaultTask {
         }
     }
 
-    private void ValidateSpecsDirectory(String specsDirectoryPath) {
+    private void validateSpecsDirectory(String specsDirectoryPath) {
         File specsDirectory = new File(specsDirectoryPath);
         if (!specsDirectory.exists()) {
             error("Specs directory specified is not existing!");

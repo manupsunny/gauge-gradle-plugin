@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 
 public class GaugePluginTest {
     private Project project;
+    public static final String GAUGE = "gauge";
 
     @Before
     public void setUp() {
@@ -22,19 +23,19 @@ public class GaugePluginTest {
 
     @Test
     public void pluginShouldBeAddedOnApply() {
-        project.getPluginManager().apply("gauge");
-        assertTrue(project.getPlugins().getPlugin("gauge") instanceof GaugePlugin);
-        assertFalse(project.getPlugins().getPlugin("gauge") instanceof JavaPlugin);
+        project.getPluginManager().apply(GAUGE);
+        assertTrue(project.getPlugins().getPlugin(GAUGE) instanceof GaugePlugin);
+        assertFalse(project.getPlugins().getPlugin(GAUGE) instanceof JavaPlugin);
     }
 
     @Test
     public void taskShouldBeAddedOnApply() {
-        project.getPluginManager().apply("gauge");
+        project.getPluginManager().apply(GAUGE);
         TaskContainer tasks = project.getTasks();
         assertEquals(1, tasks.size());
 
         SortedMap<String, Task> tasksMap = tasks.getAsMap();
-        Task gauge = tasksMap.get("gauge");
+        Task gauge = tasksMap.get(GAUGE);
         assertTrue(gauge instanceof GaugeTask);
     }
 }

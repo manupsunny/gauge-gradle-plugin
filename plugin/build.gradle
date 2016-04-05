@@ -2,8 +2,6 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'com.jfrog.bintray'
 
-sourceCompatibility = 1.7
-
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile gradleApi()
@@ -22,108 +20,4 @@ buildscript {
     }
 }
 
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri('../repo'))
-        }
-    }
-}
-
-uploadArchives.dependsOn install
-install.dependsOn build
-
-
-Properties plugin = new Properties()
-plugin.load(project.file('../plugin.properties').newDataInputStream())
-
-Properties credentials = new Properties()
-credentials.load(project.file('../local.properties').newDataInputStream())
-
-group plugin.getProperty("groupId")
-version plugin.getProperty("version")
-
-task sourcesJar(type: Jar) {
-    from sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-
-bintray {
-    user = credentials.getProperty("bintray.user")
-    key = credentials.getProperty("bintray.apikey")
-
-    configurations = ['archives']
-    pkg {
-        repo = "maven"
-        name = "gauge-gradle-plugin"
-        websiteUrl = plugin.getProperty("siteUrl")
-        vcsUrl = plugin.getProperty("gitUrl")
-        licenses = ["GPL-3.0"]
-        publish = true
-        version {
-            name = plugin.getProperty("version")
-            desc = plugin.getProperty("description")
-            released = new Date()
-        }
-    }
-}
-
-task writeNewPom << {
-    pom {
-        project {
-            name plugin.getProperty("name")
-            description plugin.getProperty("description")
-            url plugin.getProperty("siteUrl")
-            inceptionYear '2015'
-
-            packaging 'jar'
-            groupId plugin.getProperty("groupId")
-            artifactId plugin.getProperty("artifactId")
-            version plugin.getProperty("version")
-
-            licenses {
-                license {
-                    name 'GNU General Public License, Version 3'
-                    url 'http://www.gnu.org/licenses/gpl.txt'
-                    distribution 'repo'
-                }
-            }
-
-            scm {
-                url plugin.getProperty("siteUrl")
-                connection 'scm:git:git://github.com/manupsunny/gauge-gradle-plugin.git'
-                developerConnection 'scm:git:git@github.com:manupsunny/gauge-gradle-plugin.git'
-            }
-
-            developers {
-                developer {
-                    email 'manupsunny@gmail.com'
-                    name 'Manu Sunny'
-                    url 'https://github.com/manupsunny'
-                    id 'manupsunny'
-                }
-            }
-        }
-    }.writeTo("$buildDir/poms/pom-default.xml")
-}
-
-bintrayUpload.dependsOn writeNewPom
-
-sourceSets {
-    test {
-        java {
-            srcDir 'src/test/java'
-        }
-    }
-}
+apply from: 'bintray.gradle'

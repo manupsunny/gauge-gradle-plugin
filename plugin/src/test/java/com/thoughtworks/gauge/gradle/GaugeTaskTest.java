@@ -4,7 +4,6 @@ import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -53,32 +52,25 @@ public class GaugeTaskTest {
 
     @Test
     public void shouldLoadSpecsDirPropertyIfFolderExists() {
-        setSpecsDirOptionWithExistingFolder();
+        File currentDir = new File("./specsFolder");
+        currentDir.mkdir();
+
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        gauge.setSpecsDir("specsFolder");
         task.gauge();
 
         List<String> command = task.createGaugeCommand();
         assertTrue(command.contains("specsFolder"));
     }
 
-    private void setSpecsDirOptionWithExistingFolder() {
-        File currentDir = new File("./specsFolder");
-        currentDir.mkdir();
-
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setSpecsDir("specsFolder");
-    }
-
     @Test(expected = GaugeExecutionFailedException.class)
     public void shouldThrowExceptionWhenLoadingSpecsDirPropertyWhenFolderDoesNotExists() {
-        setSpecsDirOptionWithNonExistingFolder();
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        gauge.setSpecsDir("nonSpecsFolder");
         task.gauge();
 
         List<String> command = task.createGaugeCommand();
         assertTrue(!command.contains("specsFolder"));
     }
 
-    private void setSpecsDirOptionWithNonExistingFolder() {
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setSpecsDir("nonSpecsFolder");
-    }
 }
