@@ -29,10 +29,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GaugeTask extends DefaultTask {
     private final Logger log = LoggerFactory.getLogger("gauge");
@@ -44,14 +41,19 @@ public class GaugeTask extends DefaultTask {
         extension = project.getExtensions().findByType(GaugeExtension.class);
         PropertyManager propertyManager = new PropertyManager(project, extension);
         propertyManager.setProperties();
-        executeGaugeSpecs();
+
+        ProcessBuilder builder = new ProcessBuilderFactory(extension).create();
+        info("Executing command => " + builder.command());
+        try {
+            Process process = builder.start();
+            executeGaugeSpecs(process);
+        } catch (IOException e) {
+            throw new GaugeExecutionFailedException("Gauge or Java runner is not installed! Read http://getgauge.io/documentation/user/current/getting_started/download_and_install.html");
+        }
     }
 
-    private void executeGaugeSpecs() throws GaugeExecutionFailedException {
+    public void executeGaugeSpecs(Process process) throws GaugeExecutionFailedException {
         try {
-            ProcessBuilder builder = createProcessBuilder(new ProcessBuilderFactory(extension));
-            info("Executing command => " + builder.command());
-            Process process = builder.start();
             Util.inheritIO(process.getInputStream(), System.out);
             Util.inheritIO(process.getErrorStream(), System.err);
             if (process.waitFor() != 0) {
@@ -59,13 +61,7 @@ public class GaugeTask extends DefaultTask {
             }
         } catch (InterruptedException | NullPointerException e) {
             throw new GaugeExecutionFailedException(e);
-        } catch (IOException e) {
-            throw new GaugeExecutionFailedException("Gauge or Java runner is not installed! Read http://getgauge.io/documentation/user/current/getting_started/download_and_install.html");
         }
-    }
-
-    public ProcessBuilder createProcessBuilder(ProcessBuilderFactory factory) {
-        return factory.create();
     }
 
     private void warn(String format, String... args) {

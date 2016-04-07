@@ -30,7 +30,7 @@ public class GaugeTaskTest {
     }
 
     @Test
-    public void shouldLoadProperties() {
+    public void shouldLoadProperties() throws InterruptedException {
         ArrayList<String> expectedCommand = new ArrayList<>();
         expectedCommand.add("gauge");
         expectedCommand.add("--parallel");
@@ -43,15 +43,18 @@ public class GaugeTaskTest {
         expectedCommand.add("--verbose");
         when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
 
+        Process process = mock(Process.class);
+        when(process.waitFor()).thenReturn(0);
+
         GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
         gauge.setInParallel(true);
         gauge.setNodes(2);
         gauge.setEnv("dev");
         gauge.setTags("tag1");
         gauge.setAdditionalFlags("--verbose");
-        task.gauge();
+        task.executeGaugeSpecs(process);
 
-        List<String> command = task.createProcessBuilder(factory).command();
+        List<String> command = factory.create().command();
         assertTrue(command.contains("gauge"));
         assertTrue(command.contains("--parallel"));
         assertTrue(command.contains("-n"));
@@ -64,17 +67,20 @@ public class GaugeTaskTest {
     }
 
     @Test
-    public void shouldLoadSpecsDirPropertyIfFolderExists() {
+    public void shouldLoadSpecsDirPropertyIfFolderExists() throws InterruptedException {
         ArrayList<String> expectedCommand = new ArrayList<>();
         expectedCommand.add("gauge");
         expectedCommand.add("specsFolder");
         when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
 
+        Process process = mock(Process.class);
+        when(process.waitFor()).thenReturn(0);
+
         GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
         gauge.setSpecsDir("specsFolder");
-        task.gauge();
+        task.executeGaugeSpecs(process);
 
-        List<String> command = task.createProcessBuilder(factory).command();
+        List<String> command = factory.create().command();
         assertTrue(command.contains("specsFolder"));
     }
 
@@ -88,7 +94,7 @@ public class GaugeTaskTest {
         gauge.setSpecsDir("nonSpecsFolder");
         task.gauge();
 
-        List<String> command = task.createProcessBuilder(factory).command();
+        List<String> command = factory.create().command();
         assertTrue(!command.contains("specsFolder"));
     }
 
