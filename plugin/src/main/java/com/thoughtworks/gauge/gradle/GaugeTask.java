@@ -20,6 +20,7 @@
 package com.thoughtworks.gauge.gradle;
 
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
+import com.thoughtworks.gauge.gradle.util.ProcessBuilderFactory;
 import com.thoughtworks.gauge.gradle.util.PropertyManager;
 import com.thoughtworks.gauge.gradle.util.Util;
 import org.gradle.api.DefaultTask;
@@ -37,14 +38,6 @@ public class GaugeTask extends DefaultTask {
     private final Logger log = LoggerFactory.getLogger("gauge");
     private GaugeExtension extension;
 
-    private static final String TAGS_FLAG = "--tags";
-    private static final String GAUGE = "gauge";
-    private static final String PARALLEL_FLAG = "--parallel";
-    private static final String DEFAULT_SPECS_DIR = "specs";
-    private static final String NODES_FLAG = "-n";
-    private static final String ENV_FLAG = "--env";
-    private static final String GAUGE_CUSTOM_CLASSPATH_ENV = "gauge_custom_classpath";
-
     @TaskAction
     public void gauge() {
         Project project = getProject();
@@ -56,7 +49,7 @@ public class GaugeTask extends DefaultTask {
 
     private void executeGaugeSpecs() throws GaugeExecutionFailedException {
         try {
-            ProcessBuilder builder = createProcessBuilder();
+            ProcessBuilder builder = createProcessBuilder(new ProcessBuilderFactory(extension));
             info("Executing command => " + builder.command());
             Process process = builder.start();
             Util.inheritIO(process.getInputStream(), System.out);
@@ -71,87 +64,8 @@ public class GaugeTask extends DefaultTask {
         }
     }
 
-    public ProcessBuilder createProcessBuilder() {
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.command(createGaugeCommand());
-
-        setClasspath(builder);
-        return builder;
-    }
-
-    private void setClasspath(ProcessBuilder builder) {
-        String classpath = extension.getClasspath();
-        if (classpath == null) {
-            classpath = "";
-        }
-        debug("Setting Custom classpath => %s", classpath);
-        builder.environment().put(GAUGE_CUSTOM_CLASSPATH_ENV, classpath);
-    }
-
-    public ArrayList<String> createGaugeCommand() {
-        ArrayList<String> command = new ArrayList<>();
-        command.add(GAUGE);
-        addTags(command);
-        addParallelFlags(command);
-        addEnv(command);
-        addAdditionalFlags(command);
-        addSpecsDir(command);
-        return command;
-    }
-
-    private void addEnv(ArrayList<String> command) {
-        String env = extension.getEnv();
-        if (env != null && !env.isEmpty()) {
-            command.add(ENV_FLAG);
-            command.add(env);
-        }
-    }
-
-    private void addAdditionalFlags(ArrayList<String> command) {
-        String flags = extension.getAdditionalFlags();
-        if (flags != null) {
-            command.addAll(Arrays.asList(flags.split(" ")));
-        }
-    }
-
-    private void addParallelFlags(ArrayList<String> command) {
-        Boolean inParallel = extension.isInParallel();
-        Integer nodes = extension.getNodes();
-        if (inParallel != null && inParallel) {
-            command.add(PARALLEL_FLAG);
-            if (nodes != null && nodes != 0) {
-                command.add(NODES_FLAG);
-                command.add(Integer.toString(nodes));
-            }
-        }
-    }
-
-    private void addSpecsDir(ArrayList<String> command) {
-        String specsDirectoryPath = extension.getSpecsDir();
-
-        if (specsDirectoryPath != null) {
-            validateSpecsDirectory(specsDirectoryPath);
-            command.add(specsDirectoryPath);
-        } else {
-            warn("Property 'specsDir' not set. Using default value => '%s'", DEFAULT_SPECS_DIR);
-            command.add(DEFAULT_SPECS_DIR);
-        }
-    }
-
-    private void validateSpecsDirectory(String specsDirectoryPath) {
-        File specsDirectory = new File(specsDirectoryPath);
-        if (!specsDirectory.exists()) {
-            error("Specs directory specified is not existing!");
-            throw new GaugeExecutionFailedException("Specs directory specified is not existing!");
-        }
-    }
-
-    private void addTags(ArrayList<String> command) {
-        String tags = extension.getTags();
-        if (tags != null && !tags.isEmpty()) {
-            command.add(TAGS_FLAG);
-            command.add(tags);
-        }
+    public ProcessBuilder createProcessBuilder(ProcessBuilderFactory factory) {
+        return factory.create();
     }
 
     private void warn(String format, String... args) {

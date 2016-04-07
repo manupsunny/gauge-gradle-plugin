@@ -1,20 +1,23 @@
 package com.thoughtworks.gauge.gradle;
 
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
+import com.thoughtworks.gauge.gradle.util.ProcessBuilderFactory;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GaugeTaskTest {
     private GaugeTask task;
     private Project project;
+    private ProcessBuilderFactory factory;
 
     @Before
     public void setUp() {
@@ -22,14 +25,33 @@ public class GaugeTaskTest {
         project = ProjectBuilder.builder().build();
         plugin.apply(project);
         task = (GaugeTask) project.getTasks().findByPath("gauge");
+
+        factory = mock(ProcessBuilderFactory.class);
     }
 
     @Test
     public void shouldLoadProperties() {
-        setGaugeOptions();
+        ArrayList<String> expectedCommand = new ArrayList<>();
+        expectedCommand.add("gauge");
+        expectedCommand.add("--parallel");
+        expectedCommand.add("-n");
+        expectedCommand.add("2");
+        expectedCommand.add("--env");
+        expectedCommand.add("dev");
+        expectedCommand.add("--tags");
+        expectedCommand.add("tag1");
+        expectedCommand.add("--verbose");
+        when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
+
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        gauge.setInParallel(true);
+        gauge.setNodes(2);
+        gauge.setEnv("dev");
+        gauge.setTags("tag1");
+        gauge.setAdditionalFlags("--verbose");
         task.gauge();
 
-        List<String> command = task.createGaugeCommand();
+        List<String> command = task.createProcessBuilder(factory).command();
         assertTrue(command.contains("gauge"));
         assertTrue(command.contains("--parallel"));
         assertTrue(command.contains("-n"));
@@ -41,35 +63,32 @@ public class GaugeTaskTest {
         assertTrue(command.contains("--verbose"));
     }
 
-    private void setGaugeOptions() {
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setInParallel(true);
-        gauge.setNodes(2);
-        gauge.setEnv("dev");
-        gauge.setTags("tag1");
-        gauge.setAdditionalFlags("--verbose");
-    }
-
     @Test
     public void shouldLoadSpecsDirPropertyIfFolderExists() {
-        File currentDir = new File("./specsFolder");
-        currentDir.mkdir();
+        ArrayList<String> expectedCommand = new ArrayList<>();
+        expectedCommand.add("gauge");
+        expectedCommand.add("specsFolder");
+        when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
 
         GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
         gauge.setSpecsDir("specsFolder");
         task.gauge();
 
-        List<String> command = task.createGaugeCommand();
+        List<String> command = task.createProcessBuilder(factory).command();
         assertTrue(command.contains("specsFolder"));
     }
 
     @Test(expected = GaugeExecutionFailedException.class)
     public void shouldThrowExceptionWhenLoadingSpecsDirPropertyWhenFolderDoesNotExists() {
+        ArrayList<String> expectedCommand = new ArrayList<>();
+        expectedCommand.add("gauge");
+        when(factory.create()).thenThrow(GaugeExecutionFailedException.class);
+
         GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
         gauge.setSpecsDir("nonSpecsFolder");
         task.gauge();
 
-        List<String> command = task.createGaugeCommand();
+        List<String> command = task.createProcessBuilder(factory).command();
         assertTrue(!command.contains("specsFolder"));
     }
 
