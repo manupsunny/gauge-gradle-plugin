@@ -3,14 +3,14 @@ import com.thoughtworks.gauge.Table;
 import com.thoughtworks.gauge.TableRow;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
 
 public class StepImplementation {
     @Step("Say <greeting> to <product name>")
     public void helloWorld(String greeting, String name) {
-        WebDriver driver = new FirefoxDriver();
-
+        WebDriver driver = new HtmlUnitDriver();
 
         System.out.println(greeting + ", " + name);
     }
