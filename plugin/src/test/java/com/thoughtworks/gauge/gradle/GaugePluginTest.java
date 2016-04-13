@@ -13,8 +13,8 @@ import java.util.SortedMap;
 import static org.junit.Assert.*;
 
 public class GaugePluginTest {
+    private static final String GAUGE = "gauge";
     private Project project;
-    public static final String GAUGE = "gauge";
 
     @Before
     public void setUp() {

@@ -21,14 +21,20 @@ package com.thoughtworks.gauge.gradle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 
 public class GaugePlugin implements Plugin<Project> {
 
-    public static final String GAUGE = "gauge";
+    private static final String GAUGE = "gauge";
 
     @Override
     public void apply(Project project) {
         project.getExtensions().create(GAUGE, GaugeExtension.class);
-        project.getTasks().create(GAUGE, GaugeTask.class);
+        GaugeTask gaugeTask = project.getTasks().create(GAUGE, GaugeTask.class);
+        Task compileTestJava = project.getTasks().findByName("testClasses");
+
+        if (compileTestJava != null) {
+            gaugeTask.dependsOn(compileTestJava);
+        }
     }
 }

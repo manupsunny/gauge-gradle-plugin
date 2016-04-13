@@ -1,6 +1,5 @@
 package com.thoughtworks.gauge.gradle;
 
-import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
 import com.thoughtworks.gauge.gradle.util.ProcessBuilderFactory;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -15,6 +14,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GaugeTaskTest {
+    private static final String GAUGE = "gauge";
+    private static final String ENV_FLAG = "--env";
+    private static final String TAGS_FLAG = "--tags";
+    private static final String NODES_FLAG = "-n";
+    private static final String VERBOSE_FLAG = "--verbose";
+    private static final String SPECS_FOLDER = "specsFolder";
+    private static final String PARALLEL_FLAG = "--parallel";
+
     private GaugeTask task;
     private Project project;
     private ProcessBuilderFactory factory;
@@ -24,78 +31,54 @@ public class GaugeTaskTest {
         GaugePlugin plugin = new GaugePlugin();
         project = ProjectBuilder.builder().build();
         plugin.apply(project);
-        task = (GaugeTask) project.getTasks().findByPath("gauge");
-
+        task = (GaugeTask) project.getTasks().findByPath(GAUGE);
         factory = mock(ProcessBuilderFactory.class);
     }
 
     @Test
     public void shouldLoadProperties() throws InterruptedException {
-        ArrayList<String> expectedCommand = new ArrayList<>();
-        expectedCommand.add("gauge");
-        expectedCommand.add("--parallel");
-        expectedCommand.add("-n");
-        expectedCommand.add("2");
-        expectedCommand.add("--env");
-        expectedCommand.add("dev");
-        expectedCommand.add("--tags");
-        expectedCommand.add("tag1");
-        expectedCommand.add("--verbose");
-        when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
-
         Process process = mock(Process.class);
-        when(process.waitFor()).thenReturn(0);
+        setExpectations(process);
+        executeGaugeTask(process);
 
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
+        List<String> command = factory.create().command();
+        assertTrue(command.contains(GAUGE));
+        assertTrue(command.contains(PARALLEL_FLAG));
+        assertTrue(command.contains(NODES_FLAG));
+        assertTrue(command.contains("2"));
+        assertTrue(command.contains(ENV_FLAG));
+        assertTrue(command.contains("dev"));
+        assertTrue(command.contains(TAGS_FLAG));
+        assertTrue(command.contains("tag1"));
+        assertTrue(command.contains(VERBOSE_FLAG));
+        assertTrue(command.contains(SPECS_FOLDER));
+    }
+
+    private void executeGaugeTask(Process process) {
+        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName(GAUGE);
         gauge.setInParallel(true);
         gauge.setNodes(2);
         gauge.setEnv("dev");
         gauge.setTags("tag1");
-        gauge.setAdditionalFlags("--verbose");
+        gauge.setAdditionalFlags(VERBOSE_FLAG);
+        gauge.setSpecsDir(SPECS_FOLDER);
         task.executeGaugeSpecs(process);
-
-        List<String> command = factory.create().command();
-        assertTrue(command.contains("gauge"));
-        assertTrue(command.contains("--parallel"));
-        assertTrue(command.contains("-n"));
-        assertTrue(command.contains("2"));
-        assertTrue(command.contains("--env"));
-        assertTrue(command.contains("dev"));
-        assertTrue(command.contains("--tags"));
-        assertTrue(command.contains("tag1"));
-        assertTrue(command.contains("--verbose"));
     }
 
-    @Test
-    public void shouldLoadSpecsDirPropertyIfFolderExists() throws InterruptedException {
+    private void setExpectations(Process process) throws InterruptedException {
         ArrayList<String> expectedCommand = new ArrayList<>();
-        expectedCommand.add("gauge");
-        expectedCommand.add("specsFolder");
+        expectedCommand.add(GAUGE);
+        expectedCommand.add(PARALLEL_FLAG);
+        expectedCommand.add(NODES_FLAG);
+        expectedCommand.add("2");
+        expectedCommand.add(ENV_FLAG);
+        expectedCommand.add("dev");
+        expectedCommand.add(TAGS_FLAG);
+        expectedCommand.add("tag1");
+        expectedCommand.add(VERBOSE_FLAG);
+        expectedCommand.add(SPECS_FOLDER);
+
         when(factory.create()).thenReturn(new ProcessBuilder(expectedCommand));
-
-        Process process = mock(Process.class);
         when(process.waitFor()).thenReturn(0);
-
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setSpecsDir("specsFolder");
-        task.executeGaugeSpecs(process);
-
-        List<String> command = factory.create().command();
-        assertTrue(command.contains("specsFolder"));
     }
-
-    @Test(expected = GaugeExecutionFailedException.class)
-    public void shouldThrowExceptionWhenLoadingSpecsDirPropertyWhenFolderDoesNotExists() {
-        ArrayList<String> expectedCommand = new ArrayList<>();
-        expectedCommand.add("gauge");
-        when(factory.create()).thenThrow(GaugeExecutionFailedException.class);
-
-        GaugeExtension gauge = (GaugeExtension) project.getExtensions().findByName("gauge");
-        gauge.setSpecsDir("nonSpecsFolder");
-        task.gauge();
-
-        List<String> command = factory.create().command();
-        assertTrue(!command.contains("specsFolder"));
-    }
-
 }

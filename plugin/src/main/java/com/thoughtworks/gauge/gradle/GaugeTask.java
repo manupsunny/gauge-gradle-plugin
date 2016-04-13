@@ -31,19 +31,21 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+@SuppressWarnings("WeakerAccess")
 public class GaugeTask extends DefaultTask {
     private final Logger log = LoggerFactory.getLogger("gauge");
-    private GaugeExtension extension;
 
     @TaskAction
     public void gauge() {
         Project project = getProject();
-        extension = project.getExtensions().findByType(GaugeExtension.class);
+        GaugeExtension extension = project.getExtensions().findByType(GaugeExtension.class);
         PropertyManager propertyManager = new PropertyManager(project, extension);
         propertyManager.setProperties();
 
-        ProcessBuilder builder = new ProcessBuilderFactory(extension).create();
-        info("Executing command => " + builder.command());
+        ProcessBuilderFactory processBuilderFactory = new ProcessBuilderFactory(extension);
+        ProcessBuilder builder = processBuilderFactory.create();
+        log.info("Executing command => " + builder.command());
+
         try {
             Process process = builder.start();
             executeGaugeSpecs(process);
@@ -52,7 +54,7 @@ public class GaugeTask extends DefaultTask {
         }
     }
 
-    public void executeGaugeSpecs(Process process) throws GaugeExecutionFailedException {
+    void executeGaugeSpecs(Process process) throws GaugeExecutionFailedException {
         try {
             Util.inheritIO(process.getInputStream(), System.out);
             Util.inheritIO(process.getErrorStream(), System.err);
@@ -62,21 +64,5 @@ public class GaugeTask extends DefaultTask {
         } catch (InterruptedException | NullPointerException e) {
             throw new GaugeExecutionFailedException(e);
         }
-    }
-
-    private void warn(String format, String... args) {
-        log.warn(String.format(format, args));
-    }
-
-    private void debug(String format, String... args) {
-        log.debug(String.format(format, args));
-    }
-
-    private void error(String format, String... args) {
-        log.error(String.format(format, args));
-    }
-
-    private void info(String format, String... args) {
-        log.info(String.format(format, args));
     }
 }

@@ -13,14 +13,13 @@ targetCompatibility = 1.7
 buildscript {
     repositories {
 //        Used for development
-//        maven {
-//            url "../repo"
-//        }
+        maven {
+            url "../repo"
+        }
         mavenCentral()
     }
     dependencies {
-        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.1.0'
-        classpath files("$projectDir/libs")
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.4.0'
     }
 }
 
@@ -40,11 +39,4 @@ gauge {
     nodes = 4
     env = 'ci'
     additionalFlags = '--verbose'
-}
-
-task copyLibs {
-    copy {
-        from configurations.runtime
-        into "$projectDir/libs"
-    }
 }

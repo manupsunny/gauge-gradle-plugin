@@ -1,18 +1,41 @@
+/*
+ *  Copyright 2015 Manu Sunny
+ *
+ *  This file is part of Gauge-gradle-plugin.
+ *
+ *  Gauge-gradle-plugin is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Gauge-gradle-plugin is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Gauge-gradle-plugin.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
+import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 public class PropertyManager {
-    public static final String SPECS_DIR = "specsDir";
-    public static final String IN_PARALLEL = "inParallel";
-    public static final String TAGS = "tags";
-    public static final String ENV = "env";
-    public static final String NODES = "nodes";
-    public static final String ADDITIONAL_FLAGS = "additionalFlags";
-    public static final String CLASSPATH = "classpath";
+    private static final String ENV = "env";
+    private static final String TAGS = "tags";
+    private static final String NODES = "nodes";
+    private static final String SPECS_DIR = "specsDir";
+    private static final String CLASSPATH = "classpath";
+    private static final String IN_PARALLEL = "inParallel";
+    private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
     private Project project;
     private GaugeExtension extension;
@@ -43,7 +66,7 @@ public class PropertyManager {
     private void setInParallel(Map<String, ?> properties) {
         String inParallel = (String) properties.get(IN_PARALLEL);
         if (inParallel != null) {
-            extension.setInParallel("true".equals(inParallel));
+            extension.setInParallel(inParallel.equals("true"));
         }
     }
 
@@ -76,9 +99,23 @@ public class PropertyManager {
     }
 
     private void setClasspath(Map<String, ?> properties) {
-        String classpath = (String) properties.get(CLASSPATH);
+        List<String> classpath = (List<String>) properties.get(CLASSPATH);
+
         if (classpath != null) {
-            extension.setClasspath(classpath);
+            extension.setClasspath(StringUtils.join(classpath, File.pathSeparator));
+        } else {
+            extension.setClasspath(getClasspath(project));
         }
+    }
+
+    private String getClasspath(Project project) {
+        Configuration runtime = project.getConfigurations().getByName("runtime");
+        String jarPaths = runtime.getAsFileTree().getAsPath();
+
+        String mainClassPath = new File(System.getProperty("user.dir") + "/build/classes/main").getAbsolutePath();
+        String testClassPath = new File(System.getProperty("user.dir") + "/build/classes/test").getAbsolutePath();
+        String javaClassPath = mainClassPath + File.pathSeparator + testClassPath;
+
+        return javaClassPath + File.pathSeparator + jarPaths;
     }
 }
