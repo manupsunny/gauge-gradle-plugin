@@ -20,14 +20,14 @@
 package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
-import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 
 import java.io.File;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
+@SuppressWarnings("ConstantConditions")
 public class PropertyManager {
     private static final String ENV = "env";
     private static final String TAGS = "tags";
@@ -36,6 +36,8 @@ public class PropertyManager {
     private static final String CLASSPATH = "classpath";
     private static final String IN_PARALLEL = "inParallel";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
+    private static final String RUNTIME = "runtime";
+    private static final String CLASSES = "/classes";
 
     private Project project;
     private GaugeExtension extension;
@@ -99,23 +101,32 @@ public class PropertyManager {
     }
 
     private void setClasspath(Map<String, ?> properties) {
-        List<String> classpath = (List<String>) properties.get(CLASSPATH);
+        HashSet<String> classpaths = new HashSet<>();
+        addRuntimeClasspaths(project, classpaths);
+        addBuildClasspaths(project, classpaths);
 
-        if (classpath != null) {
-            extension.setClasspath(StringUtils.join(classpath, File.pathSeparator));
-        } else {
-            extension.setClasspath(getClasspath(project));
+        String classpath = "", customClasspath = (String) properties.get(CLASSPATH);
+        for(String path : classpaths){
+            classpath += path + File.pathSeparator;
         }
+        extension.setClasspath(classpath);
+//        TODO: Implement provision to pass custom classpath
     }
 
-    private String getClasspath(Project project) {
-        Configuration runtime = project.getConfigurations().getByName("runtime");
-        String jarPaths = runtime.getAsFileTree().getAsPath();
+    private void addRuntimeClasspaths(Project project, HashSet<String> classPaths) {
+        project.getConfigurations().stream()
+                .filter(configuration -> configuration.getName()
+                        .toLowerCase().endsWith(RUNTIME))
+                .forEach(configuration -> {
+                    String fileList = configuration.getAsFileTree().getAsPath();
+                    classPaths.addAll(Arrays.asList(fileList.split(File.pathSeparator)));
+                });
+    }
 
-        String mainClassPath = new File(System.getProperty("user.dir") + "/build/classes/main").getAbsolutePath();
-        String testClassPath = new File(System.getProperty("user.dir") + "/build/classes/test").getAbsolutePath();
-        String javaClassPath = mainClassPath + File.pathSeparator + testClassPath;
-
-        return javaClassPath + File.pathSeparator + jarPaths;
+    private void addBuildClasspaths(Project project, HashSet<String> classPaths) {
+        File classFolders = new File(project.getBuildDir().getAbsolutePath() + CLASSES);
+        for (File classFolder : classFolders.listFiles()) {
+            classPaths.add(classFolder.getAbsolutePath());
+        }
     }
 }

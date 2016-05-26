@@ -23,16 +23,16 @@ import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
 import com.thoughtworks.gauge.gradle.util.ProcessBuilderFactory;
 import com.thoughtworks.gauge.gradle.util.PropertyManager;
 import com.thoughtworks.gauge.gradle.util.Util;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.testing.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @SuppressWarnings("WeakerAccess")
-public class GaugeTask extends DefaultTask {
+public class GaugeTask extends Test {
     private final Logger log = LoggerFactory.getLogger("gauge");
 
     @TaskAction

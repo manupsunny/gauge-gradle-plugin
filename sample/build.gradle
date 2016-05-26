@@ -13,13 +13,16 @@ targetCompatibility = 1.7
 buildscript {
     repositories {
 //        Used for development
+//        maven {
+//            url "../repo"
+//        }
         maven {
-            url "../repo"
+            url "http://dl.bintray.com/manupsunny/maven"
         }
         mavenCentral()
     }
     dependencies {
-        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.4.0'
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:+'
     }
 }
 
@@ -27,10 +30,24 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    spec {
+        java.srcDir 'src/spec/java'
+    }
+    test {
+        compileClasspath += sourceSets.spec.runtimeClasspath
+    }
+}
+
 dependencies {
-    compile 'com.thoughtworks.gauge:gauge-java:0.3.4'
+    specCompile(
+            'com.thoughtworks.gauge:gauge-java:+',
+            'junit:junit:4.12',
+    )
+    testCompile (
+            'net.sourceforge.htmlunit:webdriver:2.6'
+    )
     compile 'org.seleniumhq.selenium:selenium-firefox-driver:2.53.0'
-    compile 'net.sourceforge.htmlunit:webdriver:2.6'
 }
 
 gauge {

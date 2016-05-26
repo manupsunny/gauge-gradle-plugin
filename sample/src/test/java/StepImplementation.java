@@ -2,10 +2,7 @@ import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.Table;
 import com.thoughtworks.gauge.TableRow;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
-import java.io.File;
 
 public class StepImplementation {
     @Step("Say <greeting> to <product name>")
@@ -26,5 +23,7 @@ public class StepImplementation {
 
     @Step("A context step which gets executed before every scenario")
     public void contextStep() {
+        Test test = new Test("test");
+        System.out.println(test.getValue());
     }
 }

@@ -25,11 +25,10 @@ description = "My Gauge Tests"
 
 buildscript {
     repositories {
-        mavenCentral()  // or jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:1.1.0'
-        classpath files("$projectDir/libs")
+        classpath 'com.thoughtworks.gauge.gradle:gauge-gradle-plugin:+'
     }
 }
 
@@ -38,6 +37,7 @@ repositories {
 }
 
 dependencies {
+    'com.thoughtworks.gauge:gauge-java:+',
 }
 
 // configure gauge task here (optional)
