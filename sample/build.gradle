@@ -14,7 +14,7 @@ buildscript {
     repositories {
 //        Used for development
 //        maven {
-//            url "../repo"
+//            url "../../repo"
 //        }
         maven {
             url "http://dl.bintray.com/manupsunny/maven"
@@ -41,11 +41,12 @@ sourceSets {
 
 dependencies {
     specCompile(
-            'com.thoughtworks.gauge:gauge-java:+',
-            'junit:junit:4.12',
+            'com.thoughtworks.gauge:gauge-java:+'
     )
     testCompile (
-            'net.sourceforge.htmlunit:webdriver:2.6'
+            'com.thoughtworks.gauge:gauge-java:+',
+            'net.sourceforge.htmlunit:webdriver:2.6',
+            'junit:junit:4.12'
     )
     compile 'org.seleniumhq.selenium:selenium-firefox-driver:2.53.0'
 }

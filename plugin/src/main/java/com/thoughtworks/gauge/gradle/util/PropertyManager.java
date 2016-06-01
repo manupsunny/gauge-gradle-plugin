@@ -33,7 +33,6 @@ public class PropertyManager {
     private static final String TAGS = "tags";
     private static final String NODES = "nodes";
     private static final String SPECS_DIR = "specsDir";
-    private static final String CLASSPATH = "classpath";
     private static final String IN_PARALLEL = "inParallel";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
     private static final String RUNTIME = "runtime";
@@ -41,79 +40,80 @@ public class PropertyManager {
 
     private Project project;
     private GaugeExtension extension;
+    private Map<String, ?> properties;
 
     public PropertyManager(Project project, GaugeExtension extension) {
         this.project = project;
         this.extension = extension;
+        this.properties = project.getProperties();
     }
 
     public void setProperties() {
-        Map<String, ?> properties = project.getProperties();
-        setTags(properties);
-        setInParallel(properties);
-        setNodes(properties);
-        setEnv(properties);
-        setAdditionalFlags(properties);
-        setClasspath(properties);
-        setSpecsDir(properties);
+        setTags();
+        setInParallel();
+        setNodes();
+        setEnv();
+        setAdditionalFlags();
+        setClasspath();
+        setSpecsDir();
     }
 
-    private void setSpecsDir(Map<String, ?> properties) {
+    private void setSpecsDir() {
         String specsDir = (String) properties.get(SPECS_DIR);
         if (specsDir != null) {
             extension.setSpecsDir(specsDir);
         }
     }
 
-    private void setInParallel(Map<String, ?> properties) {
+    private void setInParallel() {
         String inParallel = (String) properties.get(IN_PARALLEL);
         if (inParallel != null) {
             extension.setInParallel(inParallel.equals("true"));
         }
     }
 
-    private void setNodes(Map<String, ?> properties) {
+    private void setNodes() {
         String nodes = (String) properties.get(NODES);
         if (nodes != null) {
             extension.setNodes(Integer.parseInt(nodes));
         }
     }
 
-    private void setTags(Map<String, ?> properties) {
+    private void setTags() {
         String tags = (String) properties.get(TAGS);
         if (tags != null) {
             extension.setTags(tags);
         }
     }
 
-    private void setEnv(Map<String, ?> properties) {
+    private void setEnv() {
         String env = (String) properties.get(ENV);
         if (env != null) {
             extension.setEnv(env);
         }
     }
 
-    private void setAdditionalFlags(Map<String, ?> properties) {
+    private void setAdditionalFlags() {
         String flags = (String) properties.get(ADDITIONAL_FLAGS);
         if (flags != null) {
             extension.setAdditionalFlags(flags);
         }
     }
 
-    private void setClasspath(Map<String, ?> properties) {
+    private void setClasspath() {
         HashSet<String> classpaths = new HashSet<>();
-        addRuntimeClasspaths(project, classpaths);
-        addBuildClasspaths(project, classpaths);
+        String classpath = "";
 
-        String classpath = "", customClasspath = (String) properties.get(CLASSPATH);
-        for(String path : classpaths){
+        addRuntimeClasspaths(classpaths);
+        addBuildClasspaths(classpaths);
+
+        for (String path : classpaths) {
             classpath += path + File.pathSeparator;
         }
         extension.setClasspath(classpath);
-//        TODO: Implement provision to pass custom classpath
     }
 
-    private void addRuntimeClasspaths(Project project, HashSet<String> classPaths) {
+    private void addRuntimeClasspaths(HashSet<String> classPaths) {
         project.getConfigurations().stream()
                 .filter(configuration -> configuration.getName()
                         .toLowerCase().endsWith(RUNTIME))
@@ -123,10 +123,8 @@ public class PropertyManager {
                 });
     }
 
-    private void addBuildClasspaths(Project project, HashSet<String> classPaths) {
+    private void addBuildClasspaths(HashSet<String> classPaths) {
         File classFolders = new File(project.getBuildDir().getAbsolutePath() + CLASSES);
-        for (File classFolder : classFolders.listFiles()) {
-            classPaths.add(classFolder.getAbsolutePath());
-        }
+        Arrays.stream(classFolders.listFiles()).forEach(file -> classPaths.add(file.getAbsolutePath()));
     }
 }
