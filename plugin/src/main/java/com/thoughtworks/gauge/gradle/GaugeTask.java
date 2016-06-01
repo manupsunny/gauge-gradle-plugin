@@ -54,7 +54,7 @@ public class GaugeTask extends Test {
         }
     }
 
-    void executeGaugeSpecs(Process process) throws GaugeExecutionFailedException {
+    public void executeGaugeSpecs(Process process) throws GaugeExecutionFailedException {
         try {
             Util.inheritIO(process.getInputStream(), System.out);
             Util.inheritIO(process.getErrorStream(), System.err);

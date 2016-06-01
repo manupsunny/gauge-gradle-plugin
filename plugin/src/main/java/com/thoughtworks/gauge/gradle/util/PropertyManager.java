@@ -68,7 +68,7 @@ public class PropertyManager {
     private void setInParallel() {
         String inParallel = (String) properties.get(IN_PARALLEL);
         if (inParallel != null) {
-            extension.setInParallel(inParallel.equals("true"));
+            extension.setInParallel("true".equals(inParallel));
         }
     }
 
