@@ -21,6 +21,7 @@ package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 
 import java.io.File;
 import java.util.Arrays;
@@ -114,17 +115,18 @@ public class PropertyManager {
     }
 
     private void addRuntimeClasspaths(HashSet<String> classPaths) {
-        project.getConfigurations().stream()
-                .filter(configuration -> configuration.getName()
-                        .toLowerCase().endsWith(RUNTIME))
-                .forEach(configuration -> {
-                    String fileList = configuration.getAsFileTree().getAsPath();
-                    classPaths.addAll(Arrays.asList(fileList.split(File.pathSeparator)));
-                });
+        for (Configuration configuration : project.getConfigurations()) {
+            if(configuration.getName().toLowerCase().endsWith(RUNTIME)){
+                String fileList = configuration.getAsFileTree().getAsPath();
+                classPaths.addAll(Arrays.asList(fileList.split(File.pathSeparator)));
+            }
+        }
     }
 
     private void addBuildClasspaths(HashSet<String> classPaths) {
         File classFolders = new File(project.getBuildDir().getAbsolutePath() + CLASSES);
-        Arrays.stream(classFolders.listFiles()).forEach(file -> classPaths.add(file.getAbsolutePath()));
+        for (File file : classFolders.listFiles()){
+            classPaths.add(file.getAbsolutePath());
+        }
     }
 }
