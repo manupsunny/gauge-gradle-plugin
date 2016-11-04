@@ -1,0 +1,25 @@
+Properties plugin = new Properties()
+plugin.load(project.file('../plugin.properties').newDataInputStream())
+
+group = plugin.getProperty("groupId")
+version = plugin.getProperty("version")
+
+pluginBundle {
+    website = plugin.getProperty("siteUrl")
+    vcsUrl = plugin.getProperty("gitUrl")
+    description = plugin.getProperty("description")
+    tags = ['gauge', 'thoughtworks']
+
+    plugins {
+        GaugePlugin {
+            id = plugin.getProperty("groupId")
+            displayName = plugin.getProperty("name")
+        }
+    }
+
+    mavenCoordinates {
+        groupId = plugin.getProperty("groupId")
+        artifactId = plugin.getProperty("artifactId")
+        version = plugin.getProperty("version")
+    }
+}
