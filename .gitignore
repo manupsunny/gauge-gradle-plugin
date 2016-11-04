@@ -2,9 +2,11 @@
 .idea
 build/
 *.iml
-logs
+report*
+log*
 repo
 sample/libs
-sample/reports
-sample/reportsCI
+sample/report*
+sample/log*
+sample/.gauge
 local.properties

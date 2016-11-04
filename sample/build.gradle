@@ -1,3 +1,5 @@
+import com.thoughtworks.gauge.gradle.GaugeTask
+
 apply plugin: 'java'
 apply plugin: 'gauge'
 apply plugin: 'application'
@@ -57,4 +59,40 @@ gauge {
     nodes = 4
     env = 'ci'
     additionalFlags = '--verbose'
+}
+
+task gaugeDev(type: GaugeTask) {
+    doFirst {
+        gauge {
+            specsDir = 'specs'
+            inParallel = true
+            nodes = 2
+            env = 'dev'
+            additionalFlags = '--verbose'
+        }
+    }
+}
+
+task gaugeTest(type: GaugeTask) {
+    doFirst {
+        gauge {
+            specsDir = 'specs'
+            inParallel = true
+            nodes = 4
+            env = 'test'
+            additionalFlags = '--verbose'
+        }
+    }
+}
+
+task gaugeCi(type: GaugeTask) {
+    doFirst {
+        gauge {
+            specsDir = 'specs'
+            inParallel = true
+            nodes = 3
+            env = 'ci'
+            additionalFlags = '--verbose'
+        }
+    }
 }
