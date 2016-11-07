@@ -12,14 +12,8 @@ pluginBundle {
 
     plugins {
         GaugePlugin {
-            id = plugin.getProperty("groupId")
-            displayName = plugin.getProperty("name")
+            id = plugin.getProperty("pluginKey")
+            displayName = plugin.getProperty("displayName")
         }
-    }
-
-    mavenCoordinates {
-        groupId = plugin.getProperty("groupId")
-        artifactId = plugin.getProperty("artifactId")
-        version = plugin.getProperty("version")
     }
 }
