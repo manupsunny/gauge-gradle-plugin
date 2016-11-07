@@ -94,7 +94,7 @@ See gauge's [command line interface](http://getgauge.io/documentation/user/curre
 ### Adding/configuring custom Gauge tasks
 It is possible to define new custom Gauge tasks by extending `GaugePlugin` class. It can be used to create/configure tasks specific for different environments. For example,
 
-````
+````groovy
 task gaugeDev(type: GaugeTask) {
     doFirst {
         gauge {
