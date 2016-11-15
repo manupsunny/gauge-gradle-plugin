@@ -1,3 +1,5 @@
+package com.thoughtworks.gauge.gradle.sample;
+
 public class Test {
     private String value;
 

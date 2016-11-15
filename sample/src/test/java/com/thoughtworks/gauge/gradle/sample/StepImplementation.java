@@ -1,3 +1,5 @@
+package com.thoughtworks.gauge.gradle.sample;
+
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.Table;
 import com.thoughtworks.gauge.TableRow;
@@ -9,7 +11,7 @@ public class StepImplementation {
     @Step("Say <greeting> to <product name>")
     public void helloWorld(String greeting, String name) {
         WebDriver driver = new HtmlUnitDriver();
-
+        driver.close();
         System.out.println(greeting + ", " + name);
     }
 
