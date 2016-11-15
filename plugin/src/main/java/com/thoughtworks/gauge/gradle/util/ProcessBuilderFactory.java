@@ -21,6 +21,7 @@ package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
+import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +37,15 @@ public class ProcessBuilderFactory {
     private static final String SPECS_FLAG = "specs";
     private static final String PARALLEL_FLAG = "--parallel";
     private static final String CUSTOM_CLASSPATH = "gauge_custom_classpath";
+    private static final String WORKING_DIRECTORY_FLAG = "--dir";
 
     private final Logger log = LoggerFactory.getLogger(GAUGE);
     private GaugeExtension extension;
+    private Project project;
 
-    public ProcessBuilderFactory(GaugeExtension extension) {
+    public ProcessBuilderFactory(GaugeExtension extension, Project project) {
         this.extension = extension;
+        this.project = project;
     }
 
     public ProcessBuilder create() {
@@ -65,6 +69,7 @@ public class ProcessBuilderFactory {
         addTags(command);
         addParallelFlags(command);
         addEnv(command);
+        addWorkingDirectory(command);
         addAdditionalFlags(command);
         addSpecsDir(command);
         return command;
@@ -109,12 +114,22 @@ public class ProcessBuilderFactory {
         }
     }
 
+    private String getCurrentProjectPath() {
+        return project.getProjectDir().getAbsolutePath();
+    }
+
     private void validateSpecsDirectory(String specsDirectoryPath) {
-        File specsDirectory = new File(specsDirectoryPath);
+        File specsDirectory = new File(getCurrentProjectPath() + File.separator + specsDirectoryPath);
         if (!specsDirectory.exists()) {
             log.error("Specs directory specified is not existing!");
             throw new GaugeExecutionFailedException("Specs directory specified is not existing!");
         }
+    }
+
+    private void addWorkingDirectory(ArrayList<String> command) {
+        String workingDirectory = getCurrentProjectPath();
+        command.add(WORKING_DIRECTORY_FLAG);
+        command.add(workingDirectory);
     }
 
     private void addTags(ArrayList<String> command) {

@@ -42,7 +42,7 @@ public class GaugeTask extends Test {
         PropertyManager propertyManager = new PropertyManager(project, extension);
         propertyManager.setProperties();
 
-        ProcessBuilderFactory processBuilderFactory = new ProcessBuilderFactory(extension);
+        ProcessBuilderFactory processBuilderFactory = new ProcessBuilderFactory(extension, project);
         ProcessBuilder builder = processBuilderFactory.create();
         log.info("Executing command => " + builder.command());
 
