@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -65,7 +67,7 @@ public class ProcessBuilderFactory {
 
     private ArrayList<String> createGaugeCommand() {
         ArrayList<String> command = new ArrayList<>();
-        command.add(GAUGE);
+        addGaugeExecutable(command);
         addTags(command);
         addParallelFlags(command);
         addEnv(command);
@@ -138,5 +140,15 @@ public class ProcessBuilderFactory {
             command.add(TAGS_FLAG);
             command.add(tags);
         }
+    }
+
+    private void addGaugeExecutable(ArrayList<String> command) {
+        String gaugeRoot = extension.getGaugeRoot();
+        Path pathToGauge = Paths.get("");
+        if (gaugeRoot != null && !gaugeRoot.isEmpty()) {
+            pathToGauge = Paths.get(pathToGauge.toString(), gaugeRoot, "bin");
+        }
+        pathToGauge = Paths.get(pathToGauge.toString(), GAUGE);
+        command.add(pathToGauge.toString());
     }
 }
