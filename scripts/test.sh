@@ -1,3 +1,3 @@
-pushd plugin
+cd plugin
 ../gradlew clean test
-popd
+cd..
