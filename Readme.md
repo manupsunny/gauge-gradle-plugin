@@ -95,7 +95,7 @@ See gauge's [command line interface](http://getgauge.io/documentation/user/curre
 It is possible to define new custom Gauge tasks by extending `GaugePlugin` class. It can be used to create/configure tasks specific for different environments. For example,
 
 ````groovy
-task gaugeDev(type: GaugeTask) {
+task gaugeDev(type: com.thoughtworks.gauge.gradle.GaugeTask) {
     doFirst {
         gauge {
             specsDir = 'specs'
@@ -107,7 +107,7 @@ task gaugeDev(type: GaugeTask) {
     }
 }
 
-task gaugeTest(type: GaugeTask) {
+task gaugeTest(type: com.thoughtworks.gauge.gradle.GaugeTask) {
     doFirst {
         gauge {
             specsDir = 'specs'
