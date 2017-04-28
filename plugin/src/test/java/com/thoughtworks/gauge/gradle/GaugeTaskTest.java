@@ -6,6 +6,7 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class GaugeTaskTest {
     private static final String VERBOSE_FLAG = "--verbose";
     private static final String SPECS_FOLDER = "specsFolder";
     private static final String PARALLEL_FLAG = "--parallel";
+    private static final String GAUGE_ROOT = "/opt/gauge";
 
     private GaugeTask task;
     private Project project;
@@ -42,7 +44,7 @@ public class GaugeTaskTest {
         executeGaugeTask(process);
 
         List<String> command = factory.create().command();
-        assertTrue(command.contains(GAUGE));
+        assertTrue(command.contains(Paths.get(GAUGE_ROOT, "bin", GAUGE).toString()));
         assertTrue(command.contains(PARALLEL_FLAG));
         assertTrue(command.contains(NODES_FLAG));
         assertTrue(command.contains("2"));
@@ -62,12 +64,13 @@ public class GaugeTaskTest {
         gauge.setTags("tag1");
         gauge.setAdditionalFlags(VERBOSE_FLAG);
         gauge.setSpecsDir(SPECS_FOLDER);
+        gauge.setGaugeRoot(GAUGE_ROOT);
         task.executeGaugeSpecs(process);
     }
 
     private void setExpectations(Process process) throws InterruptedException {
         ArrayList<String> expectedCommand = new ArrayList<>();
-        expectedCommand.add(GAUGE);
+        expectedCommand.add(Paths.get(GAUGE_ROOT, "bin", GAUGE).toString());
         expectedCommand.add(PARALLEL_FLAG);
         expectedCommand.add(NODES_FLAG);
         expectedCommand.add("2");

@@ -23,5 +23,6 @@ public class GaugeExtensionTest {
         assertNull(gauge.getTags());
         assertNull(gauge.getClasspath());
         assertNull(gauge.getAdditionalFlags());
+        assertNull(gauge.getGaugeRoot());
     }
 }
