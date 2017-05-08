@@ -28,6 +28,7 @@ public class GaugeExtension {
     private String tags;
     private String classpath;
     private String additionalFlags;
+    private String gaugeRoot;
 
     public String getSpecsDir() {
         return specsDir;
@@ -83,5 +84,13 @@ public class GaugeExtension {
 
     public void setAdditionalFlags(String additionalFlags) {
         this.additionalFlags = additionalFlags;
+    }
+
+    public String getGaugeRoot() {
+        return gaugeRoot;
+    }
+
+    public void setGaugeRoot(String gaugeRoot) {
+        this.gaugeRoot = gaugeRoot;
     }
 }

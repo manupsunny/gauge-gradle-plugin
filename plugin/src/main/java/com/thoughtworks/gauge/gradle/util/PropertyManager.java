@@ -36,6 +36,7 @@ public class PropertyManager {
     private static final String SPECS_DIR = "specsDir";
     private static final String IN_PARALLEL = "inParallel";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
+    private static final String GAUGE_ROOT = "gaugeRoot";
     private static final String RUNTIME = "runtime";
     private static final String CLASSES = "/classes";
 
@@ -57,6 +58,7 @@ public class PropertyManager {
         setAdditionalFlags();
         setClasspath();
         setSpecsDir();
+        setGaugeRoot();
     }
 
     private void setSpecsDir() {
@@ -112,6 +114,13 @@ public class PropertyManager {
             classpath += path + File.pathSeparator;
         }
         extension.setClasspath(classpath);
+    }
+
+    private void setGaugeRoot() {
+        String gaugeRoot = (String) properties.get(GAUGE_ROOT);
+        if (gaugeRoot != null) {
+            extension.setGaugeRoot(gaugeRoot);
+        }
     }
 
     private void addRuntimeClasspaths(HashSet<String> classPaths) {

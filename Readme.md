@@ -48,6 +48,7 @@ gauge {
     env = 'dev'
     tags = 'tag1'
     additionalFlags = '--verbose'
+    gaugeRoot = '/opt/gauge'
 }
 
 ````
@@ -87,6 +88,7 @@ The following plugin properties can be additionally set:
 |nodes    | -Pnodes=3 | Number of parallel execution streams. Use with ```parallel```|
 |env      | -Penv=qa  | gauge env to run against  |
 |additionalFlags| -PadditionalFlags="--verbose" | Add additional gauge flags to execution|
+|gaugeRoot| -PgaugeRoot="/opt/gauge" | Path to gauge installation root|
 
 
 See gauge's [command line interface](http://getgauge.io/documentation/user/current/cli/index.html) for list of all flags that be used with **-PadditionalFlags** option.

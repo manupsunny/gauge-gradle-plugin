@@ -21,11 +21,13 @@ package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
+import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -65,7 +67,7 @@ public class ProcessBuilderFactory {
 
     private ArrayList<String> createGaugeCommand() {
         ArrayList<String> command = new ArrayList<>();
-        command.add(GAUGE);
+        addGaugeExecutable(command);
         addTags(command);
         addParallelFlags(command);
         addEnv(command);
@@ -138,5 +140,16 @@ public class ProcessBuilderFactory {
             command.add(TAGS_FLAG);
             command.add(tags);
         }
+    }
+
+    private void addGaugeExecutable(ArrayList<String> command) {
+        String gauge;
+        String gaugeRoot = extension.getGaugeRoot();
+        if (StringUtils.isNotEmpty(gaugeRoot)) {
+            gauge = Paths.get(gaugeRoot, "bin", GAUGE).toString();
+        } else {
+            gauge = GAUGE;
+        }
+        command.add(gauge);
     }
 }
