@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 public class ProcessBuilderFactory {
     private static final String GAUGE = "gauge";
+    private static final String RUN_SUBCOMMAND = "run";
     private static final String ENV_FLAG = "--env";
     private static final String NODE_FLAG = "-n";
     private static final String TAGS_FLAG = "--tags";
@@ -68,6 +69,7 @@ public class ProcessBuilderFactory {
     private ArrayList<String> createGaugeCommand() {
         ArrayList<String> command = new ArrayList<>();
         addGaugeExecutable(command);
+        command.add(RUN_SUBCOMMAND);
         addTags(command);
         addParallelFlags(command);
         addEnv(command);
