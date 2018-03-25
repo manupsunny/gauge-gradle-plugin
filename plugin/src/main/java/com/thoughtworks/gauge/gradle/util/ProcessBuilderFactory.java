@@ -21,7 +21,7 @@ package com.thoughtworks.gauge.gradle.util;
 
 import com.thoughtworks.gauge.gradle.GaugeExtension;
 import com.thoughtworks.gauge.gradle.exception.GaugeExecutionFailedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,24 +110,40 @@ public class ProcessBuilderFactory {
         String specsDirectoryPath = extension.getSpecsDir();
 
         if (specsDirectoryPath != null) {
-            validateSpecsDirectory(specsDirectoryPath);
-            command.add(specsDirectoryPath);
+            validateSpecsDirectory(specsDirectoryPath, command);
         } else {
             log.warn("Property 'specsDir' not set. Using default value => '%s'", "specs");
             command.add(SPECS_FLAG);
         }
     }
 
-    private String getCurrentProjectPath() {
-        return project.getProjectDir().getAbsolutePath();
+    private void validateSpecsDirectory(String specsDirectoryPath, ArrayList<String> command) {
+        if (specsDirectoryPath.contains(" ")) {
+            for (String file : specsDirectoryPath.split(" ")) {
+                validateSingleSpecsDirectory(file, command);
+            }
+        }
+        else if (specsDirectoryPath.contains(",")) {
+            for (String file : specsDirectoryPath.split(",")) {
+                validateSingleSpecsDirectory(file, command);
+            }
+        }
+        else {
+            validateSingleSpecsDirectory(specsDirectoryPath, command);
+        }
     }
 
-    private void validateSpecsDirectory(String specsDirectoryPath) {
+    private void validateSingleSpecsDirectory(String specsDirectoryPath, ArrayList<String> command) {
         File specsDirectory = new File(getCurrentProjectPath() + File.separator + specsDirectoryPath);
         if (!specsDirectory.exists()) {
             log.error("Specs directory specified is not existing!");
             throw new GaugeExecutionFailedException("Specs directory specified is not existing!");
         }
+        command.add(specsDirectoryPath);
+    }
+
+    private String getCurrentProjectPath() {
+        return project.getProjectDir().getAbsolutePath();
     }
 
     private void addWorkingDirectory(ArrayList<String> command) {

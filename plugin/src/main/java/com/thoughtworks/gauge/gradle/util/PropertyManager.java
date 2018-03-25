@@ -125,7 +125,7 @@ public class PropertyManager {
 
     private void addRuntimeClasspaths(HashSet<String> classPaths) {
         for (Configuration configuration : project.getConfigurations()) {
-            if(configuration.getName().toLowerCase().endsWith(RUNTIME)){
+            if (configuration.getName().toLowerCase().endsWith(RUNTIME)) {
                 String fileList = configuration.getAsFileTree().getAsPath();
                 classPaths.addAll(Arrays.asList(fileList.split(File.pathSeparator)));
             }
@@ -133,9 +133,16 @@ public class PropertyManager {
     }
 
     private void addBuildClasspaths(HashSet<String> classPaths) {
-        File classFolders = new File(project.getBuildDir().getAbsolutePath() + CLASSES);
-        for (File file : classFolders.listFiles()){
-            classPaths.add(file.getAbsolutePath());
+        findFiles(project.getBuildDir().getAbsolutePath() + CLASSES, classPaths);
+    }
+
+    private void findFiles(String dir, HashSet<String> classPaths) {
+        File files = new File(dir);
+        for (File file : files.listFiles()) {
+            if (file.isDirectory()) {
+                classPaths.add(file.getAbsolutePath());
+                findFiles(file.getAbsolutePath(), classPaths);
+            }
         }
     }
 }
