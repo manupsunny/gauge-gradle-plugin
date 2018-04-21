@@ -62,6 +62,10 @@ To execute gauge specs,
 gradle gauge
 ````
 
+#### Execute list of specs
+```
+gradle gauge -PspecsDir="specs/first.spec specs/second.spec"
+```
 #### Execute specs in parallel
 ```
 gradle gauge -PinParallel=true -PspecsDir=specs
