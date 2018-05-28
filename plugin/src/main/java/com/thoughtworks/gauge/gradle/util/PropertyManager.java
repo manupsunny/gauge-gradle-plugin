@@ -39,6 +39,8 @@ public class PropertyManager {
     private static final String GAUGE_ROOT = "gaugeRoot";
     private static final String RUNTIME = "runtime";
     private static final String CLASSES = "/classes";
+    private final String FAILED = "--failed";
+    private final String REPEAT = "--repeat";
 
     private Project project;
     private GaugeExtension extension;
@@ -100,6 +102,9 @@ public class PropertyManager {
         String flags = (String) properties.get(ADDITIONAL_FLAGS);
         if (flags != null) {
             extension.setAdditionalFlags(flags);
+            if (flags.contains(FAILED) || flags.contains(REPEAT)) {
+                extension.setSpecsDir(null);
+            }
         }
     }
 
