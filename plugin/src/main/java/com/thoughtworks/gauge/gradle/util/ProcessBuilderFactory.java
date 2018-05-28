@@ -111,9 +111,6 @@ public class ProcessBuilderFactory {
 
         if (specsDirectoryPath != null) {
             validateSpecsDirectory(specsDirectoryPath, command);
-        } else {
-            log.warn("Property 'specsDir' not set. Using default value => '%s'", "specs");
-            command.add(SPECS_FLAG);
         }
     }
 
@@ -122,13 +119,11 @@ public class ProcessBuilderFactory {
             for (String file : specsDirectoryPath.split(" ")) {
                 validateSingleSpecsDirectory(file, command);
             }
-        }
-        else if (specsDirectoryPath.contains(",")) {
+        } else if (specsDirectoryPath.contains(",")) {
             for (String file : specsDirectoryPath.split(",")) {
                 validateSingleSpecsDirectory(file, command);
             }
-        }
-        else {
+        } else {
             validateSingleSpecsDirectory(specsDirectoryPath, command);
         }
     }
