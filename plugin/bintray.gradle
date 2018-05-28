@@ -42,13 +42,14 @@ bintray {
     pkg {
         repo = "maven"
         name = "gauge-gradle-plugin"
+        desc = plugin.getProperty("description")
         websiteUrl = plugin.getProperty("siteUrl")
         vcsUrl = plugin.getProperty("gitUrl")
         licenses = ["GPL-3.0"]
         publish = true
         version {
             name = plugin.getProperty("version")
-            desc = plugin.getProperty("description")
+            desc = plugin.getProperty("versionDescription")
             released = new Date()
         }
     }
