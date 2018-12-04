@@ -53,7 +53,8 @@ gauge {
 
 ````
 
-The plugin is also available at [Gradle Plugin Portal](https://plugins.gradle.org/). Find more details [here](https://plugins.gradle.org/plugin/com.thoughtworks.gauge)..
+Older Versions of the Plugin are also available at [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.thoughtworks.gauge). For an uptodate version of the Plugin please use `buildscript` and `mavenCentral()` in your build.gradle as shown in the example above.
+
 
 ### Executing specs using gradle
 To execute gauge specs,
