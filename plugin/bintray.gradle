@@ -55,43 +55,45 @@ bintray {
     }
 }
 
-task writeNewPom << {
-    pom {
-        project {
-            name plugin.getProperty("name")
-            description plugin.getProperty("description")
-            url plugin.getProperty("siteUrl")
-            inceptionYear '2015'
-
-            packaging 'jar'
-            groupId plugin.getProperty("groupId")
-            artifactId plugin.getProperty("artifactId")
-            version plugin.getProperty("version")
-
-            licenses {
-                license {
-                    name 'GNU General Public License, Version 3'
-                    url 'http://www.gnu.org/licenses/gpl.txt'
-                    distribution 'repo'
-                }
-            }
-
-            scm {
+task writeNewPom {
+    doLast {
+        pom {
+            project {
+                name plugin.getProperty("name")
+                description plugin.getProperty("description")
                 url plugin.getProperty("siteUrl")
-                connection 'scm:git:git://github.com/manupsunny/gauge-gradle-plugin.git'
-                developerConnection 'scm:git:git@github.com:manupsunny/gauge-gradle-plugin.git'
-            }
+                inceptionYear '2015'
 
-            developers {
-                developer {
-                    email 'manupsunny@gmail.com'
-                    name 'Manu Sunny'
-                    url 'https://github.com/manupsunny'
-                    id 'manupsunny'
+                packaging 'jar'
+                groupId plugin.getProperty("groupId")
+                artifactId plugin.getProperty("artifactId")
+                version plugin.getProperty("version")
+
+                licenses {
+                    license {
+                        name 'GNU General Public License, Version 3'
+                        url 'http://www.gnu.org/licenses/gpl.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                scm {
+                    url plugin.getProperty("siteUrl")
+                    connection 'scm:git:git://github.com/manupsunny/gauge-gradle-plugin.git'
+                    developerConnection 'scm:git:git@github.com:manupsunny/gauge-gradle-plugin.git'
+                }
+
+                developers {
+                    developer {
+                        email 'manupsunny@gmail.com'
+                        name 'Manu Sunny'
+                        url 'https://github.com/manupsunny'
+                        id 'manupsunny'
+                    }
                 }
             }
-        }
-    }.writeTo("$buildDir/poms/pom-default.xml")
+        }.writeTo("$buildDir/poms/pom-default.xml")
+    }
 }
 
 bintrayUpload.dependsOn writeNewPom
