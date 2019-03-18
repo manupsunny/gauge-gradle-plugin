@@ -4,6 +4,15 @@ plugin.load(project.file('../plugin.properties').newDataInputStream())
 group = plugin.getProperty("groupId")
 version = plugin.getProperty("version")
 
+gradlePlugin {
+    plugins {
+        gaugePlugin {
+            id = plugin.getProperty("pluginKey")
+            implementationClass = 'com.thoughtworks.gauge.gradle.GaugePlugin'
+        }
+    }
+}
+
 pluginBundle {
     website = plugin.getProperty("siteUrl")
     vcsUrl = plugin.getProperty("gitUrl")
@@ -11,9 +20,13 @@ pluginBundle {
     tags = ['gauge', 'thoughtworks']
 
     plugins {
-        GaugePlugin {
-            id = plugin.getProperty("pluginKey")
+        gaugePlugin {
             displayName = plugin.getProperty("displayName")
         }
+    }
+
+    mavenCoordinates {
+        groupId = group
+        artifactId = plugin.getProperty("artifactId")
     }
 }
