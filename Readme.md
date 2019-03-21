@@ -1,5 +1,3 @@
-Supported at https://github.com/getgauge-contrib/gauge-gradle-plugin
-
 [![Maven Central](https://img.shields.io/maven-central/v/com.thoughtworks.gauge.gradle/gauge-gradle-plugin.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22gauge-gradle-plugin%22)
 [![Download](https://api.bintray.com/packages/manupsunny/maven/gauge-gradle-plugin/images/download.svg) ](https://bintray.com/manupsunny/maven/gauge-gradle-plugin/_latestVersion)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/d4d3e7d6c4ce4fa3a79f2790167fd511)](https://www.codacy.com/app/manupsunny/gauge-gradle-plugin)
@@ -7,6 +5,8 @@ Supported at https://github.com/getgauge-contrib/gauge-gradle-plugin
 
 
 # Gauge Gradle Plugin
+
+> For support, please visit https://github.com/getgauge/gauge-gradle-plugin
 
 Use the gauge-gradle-plugin to execute specifications in your [Gauge](http://getgauge.io) java project and manage dependencies using [Gradle](http://gradle.org//).
 
